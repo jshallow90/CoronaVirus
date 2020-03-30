@@ -9,12 +9,14 @@ plt.style.use('seaborn')
 
 def formatList(list):
     output = ""
-    if len(list) > 1:
-        for item in list[:len(list)-2]:
+    if len(list) == 1:
+        output = list
+    elif len(list) == 2:
+        output += list[0] + " and " + list[1]
+    elif len(list) > 2:
+        for item in list[:len(list) - 2]:
             output += item + ", "
         output += "and " + list[-1]
-    else:
-        output = list
     return output
 
 
@@ -38,13 +40,19 @@ def countryStatus(country_slug, status):
     return response.json()
 
 
-def parseData(countryJSON):
+def parseData(countryJSON, ignoreZeroDates=False):
     caseDict = {}
-    for object in countryJSON:
-        caseDate = datetime.datetime(int(object['Date'][:4]), int(object['Date'][5:7]), int(object['Date'][8:10]))
-        numberCases = int(object['Cases'])
+    for jsonObject in countryJSON:
+        caseDate = datetime.datetime(int(jsonObject['Date'][:4]), int(jsonObject['Date'][5:7]),
+                                     int(jsonObject['Date'][8:10]))
+        numberCases = int(jsonObject['Cases'])
         if caseDate in caseDict:
             caseDict[caseDate] += numberCases
+        elif ignoreZeroDates:
+            if numberCases > 0:
+                caseDict[caseDate] = numberCases
+            else:
+                continue
         else:
             caseDict[caseDate] = numberCases
     return caseDict
@@ -52,34 +60,34 @@ def parseData(countryJSON):
 
 def plotGraph(dates, cases):
     plt.plot_date(dates, cases, linestyle='solid')
-    plt.tight_layout()
+    #plt.tight_layout()
     plt.gcf().autofmt_xdate()
 
 
-def singleCountryStats(country):
+def singleCountryStats(country, ignoreZeroDates=False):
     statuses = ['confirmed', 'recovered', 'deaths']
     for status in statuses:
         countryJSON = countryStatus(country, status)
-        cases = parseData(countryJSON)
+        cases = parseData(countryJSON, ignoreZeroDates)
         plotGraph(cases.keys(), cases.values())
     plt.legend(labels=statuses)
+    plt.show()
 
 
-def compareCounties(countries, status):
+def compareCounties(countries, status, ignoreZeroDates=False):
     for country in countries:
         countryJSON = countryStatus(country, status)
-        cases = parseData(countryJSON)
+        cases = parseData(countryJSON, ignoreZeroDates)
         plotGraph(cases.keys(), cases.values())
     plt.legend(labels=countries)
     plt.title(status.capitalize() + " total for countries : " + formatList(countries))
+    plt.show()
 
 
 def main():
-    #singleCountryStats('italy')
-    compareCounties(['us', 'italy'], 'deaths')
-    plt.show()
+    #singleCountryStats('italy', ignoreZeroDates=True)
+    compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'confirmed', ignoreZeroDates=True)
 
 
 if __name__ == '__main__':
     main()
-
