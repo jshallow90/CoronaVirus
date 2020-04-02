@@ -86,8 +86,8 @@ def compareCounties(countries, status, ignoreZeroDates=False):
 
 
 def main():
-    singleCountryStats('united-kingdom', ignoreZeroDates=True)
-    #compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'deaths', ignoreZeroDates=True)
+    #singleCountryStats('united-kingdom', ignoreZeroDates=True)
+    compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'confirmed', ignoreZeroDates=True)
 
 
 if __name__ == '__main__':
