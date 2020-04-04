@@ -1,6 +1,7 @@
 import json
 import sys
 
+
 def formatList(list):
     output = ""
     if len(list) == 1:
