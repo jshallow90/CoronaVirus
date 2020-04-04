@@ -1,5 +1,5 @@
 import json
-
+import sys
 
 def formatList(list):
     output = ""
@@ -24,3 +24,9 @@ def helperFunction():
     print(" ---- Functions ---- ")
     response = requests.get(constants.rootRequest)
     jprint(response.json())
+
+
+def printOutput(outputFile, inputJSON):
+    outputPath = "Outputs/" + outputFile
+    sys.stdout = open(outputPath, "w")
+    jprint(inputJSON)

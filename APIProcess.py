@@ -61,7 +61,8 @@ def compareCounties(countries, status, ignoreZeroDates=False):
 
 def main():
     # singleCountryStats('united-kingdom', ignoreZeroDates=True)
-    compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'confirmed', ignoreZeroDates=True)
+    # compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'confirmed', ignoreZeroDates=True)
+    helperFunctions.printOutput('United-Kingdom.json', countryStatus('united-kingdom', 'deaths'))
 
 
 if __name__ == '__main__':
