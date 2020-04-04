@@ -60,12 +60,13 @@ def parseData(countryJSON, ignoreZeroDates=False):
 
 def plotGraph(dates, cases):
     plt.plot_date(dates, cases, linestyle='solid')
-    #plt.tight_layout()
+    plt.tight_layout()
+    plt.yscale("log", basey=2)
     plt.gcf().autofmt_xdate()
 
 
 def singleCountryStats(country, ignoreZeroDates=False):
-    statuses = ['confirmed', 'recovered', 'deaths']
+    statuses = ['deaths', 'recovered', 'confirmed']
     for status in statuses:
         countryJSON = countryStatus(country, status)
         cases = parseData(countryJSON, ignoreZeroDates)
@@ -85,8 +86,8 @@ def compareCounties(countries, status, ignoreZeroDates=False):
 
 
 def main():
-    #singleCountryStats('italy', ignoreZeroDates=True)
-    compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'confirmed', ignoreZeroDates=True)
+    singleCountryStats('united-kingdom', ignoreZeroDates=True)
+    #compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'deaths', ignoreZeroDates=True)
 
 
 if __name__ == '__main__':
