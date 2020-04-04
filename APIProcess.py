@@ -1,41 +1,14 @@
+import constants
+import helperFunctions
 import requests
-import json
 import datetime
 import matplotlib.pyplot as plt
-
-rootRequest = "https://api.covid19api.com/"
-plt.style.use('seaborn')
-
-
-def formatList(list):
-    output = ""
-    if len(list) == 1:
-        output = list
-    elif len(list) == 2:
-        output += list[0] + " and " + list[1]
-    elif len(list) > 2:
-        for item in list[:len(list) - 2]:
-            output += item + ", "
-        output += "and " + list[-1]
-    return output
-
-
-def jprint(obj):
-    # create a formatted string of the Python JSON object
-    text = json.dumps(obj, sort_keys=True, indent=4)
-    print(text)
-
-
-def helperFunction():
-    print(" ---- Functions ---- ")
-    response = requests.get(rootRequest)
-    jprint(response.json())
 
 
 def countryStatus(country_slug, status):
     requestPath = ""
     if status in {'confirmed', 'recovered', 'deaths'}:
-        requestPath = "{}country/{}/status/{}".format(rootRequest, country_slug, status)
+        requestPath = "{}country/{}/status/{}".format(constants.rootRequest, country_slug, status)
     response = requests.get(requestPath)
     return response.json()
 
@@ -59,6 +32,7 @@ def parseData(countryJSON, ignoreZeroDates=False):
 
 
 def plotGraph(dates, cases):
+    plt.style.use('seaborn')
     plt.plot_date(dates, cases, linestyle='solid')
     plt.tight_layout()
     plt.yscale("log", basey=2)
@@ -81,12 +55,12 @@ def compareCounties(countries, status, ignoreZeroDates=False):
         cases = parseData(countryJSON, ignoreZeroDates)
         plotGraph(cases.keys(), cases.values())
     plt.legend(labels=countries)
-    plt.title(status.capitalize() + " total for countries : " + formatList(countries))
+    plt.title(status.capitalize() + " total for countries : " + helperFunctions.formatList(countries))
     plt.show()
 
 
 def main():
-    #singleCountryStats('united-kingdom', ignoreZeroDates=True)
+    # singleCountryStats('united-kingdom', ignoreZeroDates=True)
     compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'confirmed', ignoreZeroDates=True)
 
 
