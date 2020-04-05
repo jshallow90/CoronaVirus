@@ -1,5 +1,4 @@
-import constants
-import helperFunctions
+from Utils import constants, helperFunctions
 import requests
 import datetime
 import matplotlib.pyplot as plt
@@ -17,11 +16,11 @@ class Country:
 
 
 def countryDataRequest(country_slug, status):
-    '''
+    """
     :param country_slug: country of the request from https://api.covid19api.com/countries
     :param status: can be one of deaths, confirmed, recovered
     :return: json of the requested country, mapped based on countryMapping function
-    '''
+    """
     statuses = {'confirmed', 'recovered', 'deaths'}
     if status not in statuses:
         raise ValueError("Invalid status. Expected one of: %s" % statuses)
