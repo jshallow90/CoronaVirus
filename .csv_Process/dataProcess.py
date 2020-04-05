@@ -5,9 +5,9 @@ import numpy as np
 
 
 def getData():
-    confirmed = pd.read_csv('Inputs/time_series-ncov-Confirmed.csv').set_index('Date')
-    deaths = pd.read_csv('Inputs/time_series-ncov-Deaths.csv').set_index('Date')
-    recovered = pd.read_csv('Inputs/time_series-ncov-Recovered.csv').set_index('Date')
+    confirmed = pd.read_csv('../Inputs/time_series-ncov-Confirmed.csv').set_index('Date')
+    deaths = pd.read_csv('../Inputs/time_series-ncov-Deaths.csv').set_index('Date')
+    recovered = pd.read_csv('../Inputs/time_series-ncov-Recovered.csv').set_index('Date')
     return confirmed, deaths, recovered
 
 
