@@ -62,15 +62,14 @@ def plotGraph(dates, cases):
 
 
 def singleCountryStats(country, ignoreZeroDates=False):
-    statuses = ['deaths', 'recovered', 'confirmed']
-    #statuses = ['confirmed']
+    #statuses = ['deaths', 'recovered', 'confirmed']
+    statuses = ['confirmed']
     countryCount = 0
     countryLegend = []
     for status in statuses:
         countryJSON = countryStatus(country, status)
         cases = parseData(countryJSON, ignoreZeroDates)
         for country in cases:
-            print(country.country + " " + str(country.dates) + " " + str(country.totals))
             plotGraph(country.dates, country.totals)
             countryCount += 1
             countryLegend.append(country.country)
