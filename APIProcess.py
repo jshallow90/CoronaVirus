@@ -55,32 +55,21 @@ def countryDataRequest(country_slug, status):
 
 
 def parseData(countryJSON, ignoreZeroDates=False):
-    # caseDict = {}
+    caseDict = {}
     for jsonObject in countryJSON:
-        country = jsonObject['Country']
-        province = jsonObject['Province'] if 'Province' in jsonObject else ""
         caseDate = datetime.datetime(int(jsonObject['Date'][:4]), int(jsonObject['Date'][5:7]),
                                      int(jsonObject['Date'][8:10]))
         numberCases = int(jsonObject['Cases'])
-
-        if province == "" and country == "United Kingdom":
-            pass
-        elif country == "United Kingdom":
-            country = province
-
-        countryList = [item.country for item in constants.countryClasses]
-        if country not in countryList:
-            newCountry = Country(country)
-            if ignoreZeroDates:
-                if numberCases > 0:
-                    newCountry.appendData(caseDate, numberCases)
-                    constants.countryClasses.append(newCountry)
+        if caseDate in caseDict:
+            caseDict[caseDate] += numberCases
+        elif ignoreZeroDates:
+            if numberCases > 0:
+                caseDict[caseDate] = numberCases
             else:
-                newCountry.appendData(caseDate, numberCases)
-                constants.countryClasses.append(newCountry)
+                continue
         else:
-            constants.countryClasses[countryList.index(country)].appendData(caseDate, numberCases)
-    return constants.countryClasses
+            caseDict[caseDate] = numberCases
+    return caseDict
 
 
 def plotGraph(dates, cases):
@@ -92,22 +81,12 @@ def plotGraph(dates, cases):
 
 
 def singleCountryStats(country, ignoreZeroDates=False):
-    # statuses = ['deaths', 'recovered', 'confirmed']
-    statuses = ['deaths']
-    countryCount = 0
-    countryLegend = []
+    statuses = ['deaths', 'recovered', 'confirmed']
     for status in statuses:
         countryJSON = countryDataRequest(country, status)
         cases = parseData(countryJSON, ignoreZeroDates)
-        for country in cases:
-            plotGraph(country.dates, country.totals)
-            countryCount += 1
-            countryLegend.append(country.country)
-    ## needs redoing
-    if countryCount > 1:
-        plt.legend(labels=[statuses, countryLegend])
-    else:
-        plt.legend(labels=statuses)
+        plotGraph(cases.keys(), cases.values())
+    plt.legend(labels=statuses)
     plt.show()
 
 
@@ -122,8 +101,8 @@ def compareCounties(countries, status, ignoreZeroDates=False):
 
 
 def main():
-    singleCountryStats('gibraltar', ignoreZeroDates=True)
-    # compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'confirmed', ignoreZeroDates=True)
+    # singleCountryStats('united-kingdom', ignoreZeroDates=True)
+    compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'deaths', ignoreZeroDates=True)
     # helperFunctions.jprint(countryDataRequest('gibraltar', 'confirmed'))
 
 
