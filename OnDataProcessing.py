@@ -1,18 +1,26 @@
-from Utils import constants, helperFunctions
+from Utils import constants
 import requests
 import datetime
-import matplotlib.pyplot as plt
+import pandas as pd
 
 
 class Country:
-    def __init__(self, country):
-        self.country = country
-        self.dates = []
-        self.totals = []
+    """
+    Defines country class holding dates and totals as list objects.
+    """
 
-    def appendData(self, date, count):
+    def __init__(self, country, dates, totalDeaths, totalConfirmed, totalRecovered):
+        self.country = country
+        self.dates = dates
+        self.totalDeaths = totalDeaths
+        self.totalConfirmed = totalConfirmed
+        self.totalRecovered = totalRecovered
+
+    def appendData(self, date, deathCount, confirmedCount, recoveredCount):
         self.dates.append(date)
-        self.totals.append(count)
+        self.totalDeaths.append(deathCount)
+        self.totalConfirmed.append(confirmedCount)
+        self.totalRecovered.append(recoveredCount)
 
 
 def countryDataRequest(country_slug, status):
@@ -71,39 +79,20 @@ def parseData(countryJSON, ignoreZeroDates=False):
     return caseDict
 
 
-def plotGraph(dates, cases):
-    plt.style.use('seaborn')
-    plt.plot_date(dates, cases, linestyle='solid')
-    plt.tight_layout()
-    plt.yscale("log", basey=2)
-    plt.gcf().autofmt_xdate()
+def combineCountryStatistics(deaths, confirmed, recovered):
+    """
+    :param deaths: parseData for country for number of deaths
+    :param confirmed: parseData for country for number of confirmed cases
+    :param recovered: parseData for country for number of recovered cases
+    :return: format will be
+    datetime, deaths, confirmed, recovered
+    """
+    print(type(deaths))
+    dateDeaths = set([item for item in deaths])
+    dateConfirmed = set([item for item in confirmed])
+    dateRecovered = set([item for item in recovered])
+    datesCombined = list(dateDeaths.union(dateConfirmed, dateRecovered))
+    datesCombined.sort()
 
-
-def singleCountryStats(country, ignoreZeroDates=False):
-    statuses = ['deaths', 'recovered', 'confirmed']
-    for status in statuses:
-        countryJSON = countryDataRequest(country, status)
-        cases = parseData(countryJSON, ignoreZeroDates)
-        plotGraph(cases.keys(), cases.values())
-    plt.legend(labels=statuses)
-    plt.show()
-
-
-def compareCounties(countries, status, ignoreZeroDates=False):
-    for country in countries:
-        countryJSON = countryDataRequest(country, status)
-        cases = parseData(countryJSON, ignoreZeroDates)
-        plotGraph(cases.keys(), cases.values())
-    plt.legend(labels=countries)
-    plt.title(status.capitalize() + " total for countries : " + helperFunctions.formatList(countries))
-    plt.show()
-
-
-def main():
-    # singleCountryStats('united-kingdom', ignoreZeroDates=True)
-    compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'deaths', ignoreZeroDates=True)
-    # helperFunctions.jprint(countryDataRequest('gibraltar', 'confirmed'))
-
-
-if __name__ == '__main__':
-    main()
+    #for dates in datesCombined:
+    #    province = jsonObject['Province'] if 'Province' in jsonObject else ""
