@@ -79,20 +79,27 @@ def parseData(countryJSON, ignoreZeroDates=False):
     return caseDict
 
 
-def combineCountryStatistics(deaths, confirmed, recovered):
+def combineCountryStatistics(country, deaths, confirmed, recovered, printCSV=False):
     """
+    :param country: country requesting data for
     :param deaths: parseData for country for number of deaths
     :param confirmed: parseData for country for number of confirmed cases
     :param recovered: parseData for country for number of recovered cases
+    :param printCSV: boolean whether to print the data to a CSV file
     :return: format will be
     datetime, deaths, confirmed, recovered
     """
-    print(type(deaths))
-    dateDeaths = set([item for item in deaths])
-    dateConfirmed = set([item for item in confirmed])
-    dateRecovered = set([item for item in recovered])
-    datesCombined = list(dateDeaths.union(dateConfirmed, dateRecovered))
-    datesCombined.sort()
+    deaths_ds = pd.Series(deaths, name='deaths')
+    confirmed_ds = pd.Series(confirmed, name='confirmed')
+    recovered_ds = pd.Series(recovered, name='recovered')
+    deaths_ds.deaths = pd.to_numeric(deaths_ds.deaths)
+    confirmed_ds.deaths = pd.to_numeric(confirmed_ds.deaths)
+    recovered_ds.deaths = pd.to_numeric(recovered_ds.deaths)
 
-    #for dates in datesCombined:
-    #    province = jsonObject['Province'] if 'Province' in jsonObject else ""
+    combined_fd = pd.concat([deaths_ds, confirmed_ds, recovered_ds], axis=1)
+    #combined_fd.set_index()
+
+    if printCSV:
+        outputFilePath = 'Outputs/' + country + '.csv'
+        combined_fd.to_csv(outputFilePath, index=True, header=True)
+    return combined_fd
