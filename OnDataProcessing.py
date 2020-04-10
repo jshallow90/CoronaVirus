@@ -80,7 +80,7 @@ def parseData(countryJSON, ignoreZeroDates=False):
     return caseDict
 
 
-def combineCountryStatistics(country, deaths, confirmed, recovered, printCSV=False):
+def combineCountryStatistics(country, dataList, printCSV=False):
     """
     :param country: country requesting data for
     :param deaths: parseData for country for number of deaths
@@ -90,10 +90,12 @@ def combineCountryStatistics(country, deaths, confirmed, recovered, printCSV=Fal
     :return: format will be
     datetime, deaths, confirmed, recovered
     """
+    deaths, confirmed, recovered = dataList
     deaths_ds = pd.Series(deaths, name='deaths')
     confirmed_ds = pd.Series(confirmed, name='confirmed')
     recovered_ds = pd.Series(recovered, name='recovered')
     combined_fd = pd.concat([deaths_ds, confirmed_ds, recovered_ds], axis=1)
+    combined_fd['country'] = country
     combined_fd.index.names = ['Date']
 
     if printCSV:

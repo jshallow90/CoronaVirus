@@ -24,7 +24,7 @@ def singleCountryStats(country):
     statuses = ['deaths', 'confirmed', 'recovered']
     dataList = []
     for status in statuses:
-        dataList.append(OnDataProcessing.parseData(OnDataProcessing.countryDataRequest(country, status), True))
+        dataList.append(OnDataProcessing.parseData(OnDataProcessing.countryDataRequest(country, status)))
     combinedData = OnDataProcessing.combineCountryStatistics(country, dataList, True)
     plotGraphDF(combinedData)
 
