@@ -11,19 +11,22 @@ def plotGraph(dates, cases):
     plt.gcf().autofmt_xdate()
 
 
-def singleCountryStats(country, ignoreZeroDates=False):
-    statuses = ['deaths', 'recovered', 'confirmed']
-    deathData = OnDataProcessing.countryDataRequest(country, 'deaths')
-    confirmedData = OnDataProcessing.countryDataRequest(country, 'confirmed')
-    recoveredData = OnDataProcessing.countryDataRequest(country, 'recovered')
-    combinedData = OnDataProcessing.combineCountryStatistics(country, deathData, confirmedData, recoveredData)
-    #for status in statuses:
-    #    countryJSON = OnDataProcessing.countryDataRequest(country, status)
-    #    cases = OnDataProcessing.parseData(countryJSON, ignoreZeroDates)
-    #    plotGraph(cases.keys(), cases.values())
-    combinedData.plot()
-    #plt.legend(labels=statuses)
+def plotGraphDF(dataframe):
+    plt.style.use('seaborn')
+    dataframe.plot()
+    plt.tight_layout()
+    plt.yscale("log", basey=2)
+    plt.gcf().autofmt_xdate()
     plt.show()
+
+
+def singleCountryStats(country):
+    statuses = ['deaths', 'confirmed', 'recovered']
+    dataList = []
+    for status in statuses:
+        dataList.append(OnDataProcessing.parseData(OnDataProcessing.countryDataRequest(country, status), True))
+    combinedData = OnDataProcessing.combineCountryStatistics(country, dataList, True)
+    plotGraphDF(combinedData)
 
 
 def compareCounties(countries, status, ignoreZeroDates=False):
@@ -37,13 +40,8 @@ def compareCounties(countries, status, ignoreZeroDates=False):
 
 
 def main():
-    singleCountryStats('united-states', ignoreZeroDates=True)
+    singleCountryStats('united-states')
     # compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'deaths', ignoreZeroDates=True)
-    USADeaths = (OnDataProcessing.parseData(OnDataProcessing.countryDataRequest('united-states', 'deaths'), True))
-    USAConfirmed = (OnDataProcessing.parseData(OnDataProcessing.countryDataRequest('united-states', 'confirmed'), True))
-    USARecovered = (OnDataProcessing.parseData(OnDataProcessing.countryDataRequest('united-states', 'recovered'), True))
-    OnDataProcessing.combineCountryStatistics('united-states', USADeaths, USAConfirmed, USARecovered)
-    # helperFunctions.jprint(countryDataRequest('gibraltar', 'confirmed'))
 
 
 if __name__ == '__main__':

@@ -58,6 +58,7 @@ def countryDataRequest(country_slug, status):
             if province == "":
                 countryResponse.append(jsonObject)
         response = countryResponse
+    print(response)
     return response
 
 
@@ -92,12 +93,8 @@ def combineCountryStatistics(country, deaths, confirmed, recovered, printCSV=Fal
     deaths_ds = pd.Series(deaths, name='deaths')
     confirmed_ds = pd.Series(confirmed, name='confirmed')
     recovered_ds = pd.Series(recovered, name='recovered')
-    deaths_ds.deaths = pd.to_numeric(deaths_ds.deaths)
-    confirmed_ds.deaths = pd.to_numeric(confirmed_ds.deaths)
-    recovered_ds.deaths = pd.to_numeric(recovered_ds.deaths)
-
     combined_fd = pd.concat([deaths_ds, confirmed_ds, recovered_ds], axis=1)
-    #combined_fd.set_index()
+    combined_fd.index.names = ['Date']
 
     if printCSV:
         outputFilePath = 'Outputs/' + country + '.csv'
