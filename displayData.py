@@ -20,15 +20,6 @@ def plotGraphDF(dataframe):
     plt.show()
 
 
-def singleCountryStats(country):
-    statuses = ['deaths', 'confirmed', 'recovered']
-    dataList = []
-    for status in statuses:
-        dataList.append(OnDataProcessing.parseData(OnDataProcessing.countryDataRequest(country, status)))
-    combinedData = OnDataProcessing.combineCountryStatistics(country, dataList, True)
-    plotGraphDF(combinedData)
-
-
 def compareCounties(countries, status, ignoreZeroDates=False):
     for country in countries:
         countryJSON = OnDataProcessing.countryDataRequest(country, status)
@@ -37,12 +28,3 @@ def compareCounties(countries, status, ignoreZeroDates=False):
     plt.legend(labels=countries)
     plt.title(status.capitalize() + " total for countries : " + helperFunctions.formatList(countries))
     plt.show()
-
-
-def main():
-    singleCountryStats('united-states')
-    # compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'deaths', ignoreZeroDates=True)
-
-
-if __name__ == '__main__':
-    main()
