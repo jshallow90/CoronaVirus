@@ -58,7 +58,6 @@ def countryDataRequest(country_slug, status):
             if province == "":
                 countryResponse.append(jsonObject)
         response = countryResponse
-    print(response)
     return response
 
 
@@ -102,3 +101,29 @@ def combineCountryStatistics(country, printCSV=False):
         outputFilePath = 'Outputs/' + country + '.csv'
         combined_fd.to_csv(outputFilePath, index=True, header=True)
     return combined_fd
+
+
+def countryCSVReader(countryName):
+    parsedFilename = 'Outputs/' + countryName + '.csv'
+    df = pd.read_csv(parsedFilename, sep=',')
+    df = df.set_index('Date')
+    return df
+
+
+def requiresAPIupdate(countryName):
+    currentDate = datetime.datetime.today()
+    countryDate = max(countryCSVReader(countryName).index)
+    countryDateParsed = datetime.datetime(int(countryDate[:4]), int(countryDate[5:7]), int(countryDate[8:10]))
+    return (currentDate - countryDateParsed).days > 2
+
+
+def getCountryData(countryName):
+    """
+    :param countryName:
+    :return: returns pandas data frame from either CSV if no update is required, or from API request if this is the
+    first time running the request today
+    """
+    if requiresAPIupdate(countryName):
+        return combineCountryStatistics(countryName, True)
+    else:
+        return countryCSVReader(countryName)
