@@ -33,3 +33,7 @@ def printOutput(outputFile, inputJSON):
     outputPath = "Outputs/" + outputFile
     sys.stdout = open(outputPath, "w")
     jprint(inputJSON)
+
+
+def csvTranslation(filenameInput):
+    return 'Outputs/' + filenameInput + '.csv'

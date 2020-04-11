@@ -1,11 +1,13 @@
 import OnDataProcessing
+import displayData
+import machineLearning
+from IPython.display import display, HTML
 
 
 def main():
     countryList = ['united-states', 'italy', 'united-kingdom', 'france', 'germany', 'spain', 'china']
-    for country in countryList:
-        OnDataProcessing.combineCountryStatistics(country, True)
-    # compareCounties(['us', 'italy', 'united-kingdom', 'france', 'germany', 'spain'], 'deaths', ignoreZeroDates=True)
+    displayData.compareCounties(countryList, 'deaths')
+    machineLearning.getCountryData('united-kingdom')
 
 
 if __name__ == '__main__':
