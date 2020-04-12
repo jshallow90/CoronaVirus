@@ -1,6 +1,8 @@
+import dash_core_components as dcc
+import dash_html_components as html
+import plotly.graph_objs as go
 import pandas as pd
 import matplotlib.pyplot as plt
-import plotly.graph_objects as go
 import OnDataProcessing
 from Utils import helperFunctions
 
@@ -29,16 +31,54 @@ def compareCounties(countries, status):
     plt.show()
 
 
-def showTable(dataframe):
-    #fig = go.Figure(data=[go.Table(
-    #    header=dict(values=list(dataframe.columns),
-    #                fill_color='paleturquoise',
-    #                align='center'),
-    #    cells=dict(values=[dataframe.index, dataframe['deaths'], dataframe['confirmed'], dataframe['recovered']],
-    #               fill_color='lavender',
-    #               align='center'))
-    #])
-    fig = go.Figure(data=[go.Table(header=dict(values=['A Scores', 'B Scores']),
-                                   cells=dict(values=[[100, 90, 80, 90], [95, 85, 75, 95]]))
-                          ])
-    fig.show()
+def generate_table(dataframe, max_rows=10):
+    return html.Table([
+        html.Thead(
+            html.Tr([html.Th(col) for col in dataframe.columns])
+        ),
+        html.Tbody([
+            html.Tr([
+                html.Td(dataframe.iloc[i][col]) for col in dataframe.columns
+            ]) for i in range((len(dataframe)))
+        ])
+    ])
+
+
+def runServer(app, dataframe):
+    print(dataframe)
+    app.layout = html.Div([
+        dcc.Graph(
+            id='life-exp-vs-gdp',
+            figure={
+                'data': [
+                    go.Scatter(
+                        x=dataframe[dataframe[status] > 0].index,
+                        y=dataframe[dataframe[status] > 0][status],
+                        text=dataframe[status],
+                        mode='lines+markers',
+                        opacity=0.8,
+                        marker={
+                            'size': 15,
+                            'line': {'width': 0.5, 'color': 'white'}
+                        },
+                        name=status
+                    ) for status in ['deaths', 'confirmed', 'recovered']
+                ],
+                'layout': go.Layout(
+                    xaxis={'title': 'Date'},
+                    yaxis={'title': 'Total for Italy'},
+                    margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                    legend={'x': 0, 'y': 1},
+                    hovermode='closest'
+                )
+            }
+        ),
+        dcc.RadioItems(
+
+        ),
+
+        html.Br(),
+        html.Br(),
+
+        generate_table(dataframe)
+    ])

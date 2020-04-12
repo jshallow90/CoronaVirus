@@ -1,13 +1,16 @@
+import dash
 import OnDataProcessing
 import displayData
 import machineLearning
+from Utils import constants
+app = dash.Dash(__name__, external_stylesheets=constants.external_stylesheets)
 
 
-def main():
-    #countryList = ['united-states', 'italy', 'united-kingdom', 'france', 'germany', 'spain', 'china']
-    #displayData.compareCounties(countryList, 'deaths')
-    displayData.showTable(OnDataProcessing.getCountryData('italy'))
+def main(app):
+    dataframe = OnDataProcessing.getCountryData('italy')
+    displayData.runServer(app, dataframe)
 
 
 if __name__ == '__main__':
-    main()
+    main(app)
+    app.run_server(debug=True)

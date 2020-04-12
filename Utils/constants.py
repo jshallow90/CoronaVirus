@@ -5,3 +5,4 @@ UKSet = {'anguilla', 'bermuda', 'british virgin islands', 'cayman islands', 'tur
 FranceSet = {'new caledonia', 'martinique', 'saint barthelemy', 'french polynesia', 'mayotte', 'st martin', \
              'french guiana', 'reunion', 'guadeloupe'}
 countriesWithProvinces = {'france', 'united-kingdom'}
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
