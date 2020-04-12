@@ -3,14 +3,15 @@ import OnDataProcessing
 import displayData
 import machineLearning
 from Utils import constants
-app = dash.Dash(__name__, external_stylesheets=constants.external_stylesheets)
 
 
-def main(app):
-    dataframe = OnDataProcessing.getCountryData('italy')
-    displayData.runServer(app, dataframe)
+def main():
+    app = dash.Dash(__name__, external_stylesheets=constants.external_stylesheets)
+    displayData.runServer(app, OnDataProcessing.getCountryData('italy'),
+                          OnDataProcessing.combineCountryDataFrames(constants.countryTestCases))
+    return app
 
 
 if __name__ == '__main__':
-    main(app)
+    app = main()
     app.run_server(debug=True)

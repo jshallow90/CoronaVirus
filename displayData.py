@@ -44,17 +44,16 @@ def generate_table(dataframe, max_rows=10):
     ])
 
 
-def runServer(app, dataframe):
-    print(dataframe)
+def runServer(app, singleCountryDataframe, allCountrysDataframe):
     app.layout = html.Div([
         dcc.Graph(
             id='life-exp-vs-gdp',
             figure={
                 'data': [
                     go.Scatter(
-                        x=dataframe[dataframe[status] > 0].index,
-                        y=dataframe[dataframe[status] > 0][status],
-                        text=dataframe[status],
+                        x=singleCountryDataframe[singleCountryDataframe[status] > 0].index,
+                        y=singleCountryDataframe[singleCountryDataframe[status] > 0][status],
+                        text=singleCountryDataframe[status],
                         mode='lines+markers',
                         opacity=0.8,
                         marker={
@@ -73,12 +72,35 @@ def runServer(app, dataframe):
                 )
             }
         ),
-        dcc.RadioItems(
-
+        dcc.Graph(
+            id='life-exp-vs-gdp',
+            figure={
+                'data': [
+                    go.Scatter(
+                        x=allCountrysDataframe[allCountrysDataframe['deaths'] > 0].index,
+                        y=allCountrysDataframe[allCountrysDataframe['deaths'] > 0 and allCountrysDataframe['country'] == country]['deaths'],
+                        text=singleCountryDataframe[status],
+                        mode='lines+markers',
+                        opacity=0.8,
+                        marker={
+                            'size': 15,
+                            'line': {'width': 0.5, 'color': 'white'}
+                        },
+                        name=status
+                    ) for country in allCountrysDataframe.country.unique()
+                ],
+                'layout': go.Layout(
+                    xaxis={'title': 'Date'},
+                    yaxis={'title': 'Total for Italy'},
+                    margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
+                    legend={'x': 0, 'y': 1},
+                    hovermode='closest'
+                )
+            }
         ),
 
         html.Br(),
         html.Br(),
 
-        generate_table(dataframe)
+        generate_table(singleCountryDataframe)
     ])

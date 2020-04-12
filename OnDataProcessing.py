@@ -2,6 +2,7 @@ from Utils import constants
 import requests
 import datetime
 import pandas as pd
+import os.path
 
 
 class Country:
@@ -21,6 +22,12 @@ class Country:
         self.totalDeaths.append(deathCount)
         self.totalConfirmed.append(confirmedCount)
         self.totalRecovered.append(recoveredCount)
+
+
+def isValidCountry(country):
+    if country in constants.countrySlugs:
+        return True
+    return False
 
 
 def countryDataRequest(country_slug, status):
@@ -79,7 +86,7 @@ def parseData(countryJSON, ignoreZeroDates=False):
     return caseDict
 
 
-def combineCountryStatistics(country, printCSV=False):
+def combineSingleCountryStatistics(country, printCSV=False):
     """
     :param country: country requesting data for
     :param deaths: parseData for country for number of deaths
@@ -111,10 +118,14 @@ def countryCSVReader(countryName):
 
 
 def requiresAPIupdate(countryName):
-    currentDate = datetime.datetime.today()
-    countryDate = max(countryCSVReader(countryName).index)
-    countryDateParsed = datetime.datetime(int(countryDate[:4]), int(countryDate[5:7]), int(countryDate[8:10]))
-    return (currentDate - countryDateParsed).days > 2
+    parsedFilename = 'Outputs/' + countryName + '.csv'
+    if not os.path.isfile(parsedFilename):
+        return True
+    else:
+        currentDate = datetime.datetime.today()
+        countryDate = max(countryCSVReader(countryName).index)
+        countryDateParsed = datetime.datetime(int(countryDate[:4]), int(countryDate[5:7]), int(countryDate[8:10]))
+        return (currentDate - countryDateParsed).days > 2
 
 
 def getCountryData(countryName):
@@ -123,7 +134,17 @@ def getCountryData(countryName):
     :return: returns pandas data frame from either CSV if no update is required, or from API request if this is the
     first time running the request today
     """
+    if not isValidCountry:
+        raise ValueError("Invalid country slug. must be one of : " + constants.countrySlugs)
+
     if requiresAPIupdate(countryName):
-        return combineCountryStatistics(countryName, True)
+        return combineSingleCountryStatistics(countryName, True)
     else:
         return countryCSVReader(countryName)
+
+
+def combineCountryDataFrames(countries):
+    countriesDataFrames = pd.DataFrame()
+    for country in countries:
+        countriesDataFrames = countriesDataFrames.append(getCountryData(country))
+    print(countriesDataFrames)
