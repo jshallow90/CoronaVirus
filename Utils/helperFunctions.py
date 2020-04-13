@@ -1,6 +1,6 @@
 import json
 import requests
-import constants
+from Utils import constants
 import sys
 
 
@@ -18,7 +18,7 @@ def formatList(list):
 
 
 def jprint(obj):
-    # create a formatted string of the Python JSON object
+    # create a formatted string formatListof the Python JSON object
     text = json.dumps(obj, sort_keys=True, indent=4)
     print(text)
 
