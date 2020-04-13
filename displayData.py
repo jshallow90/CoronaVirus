@@ -1,7 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
 import plotly.graph_objs as go
-import pandas as pd
 import matplotlib.pyplot as plt
 import OnDataProcessing
 from Utils import helperFunctions
@@ -31,7 +31,7 @@ def compareCounties(countries, status):
     plt.show()
 
 
-def generate_table(dataframe, max_rows=10):
+def generate_table(dataframe):
     return html.Table([
         html.Thead(
             html.Tr([html.Th(col) for col in dataframe.columns])
