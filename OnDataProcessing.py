@@ -117,6 +117,8 @@ def countryCSVReader(countryName):
 
 
 def requiresAPIupdate(countryName):
+    if countryName is None:
+        return False
     parsedFilename = 'Outputs/' + countryName + '.csv'
     if not os.path.isfile(parsedFilename):
         return True
@@ -146,7 +148,6 @@ def combineCountryDataFrames(countries):
     countriesDataFrames = pd.DataFrame()
     for country in countries:
         countriesDataFrames = countriesDataFrames.append(getCountryData(country))
-    countriesDataFrames.to_clipboard(sep=',')
     return countriesDataFrames
 
 
