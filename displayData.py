@@ -1,5 +1,6 @@
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import matplotlib.pyplot as plt
@@ -43,7 +44,7 @@ def runServer(app, singleCountryDataframe, allCountrysDataframe, countriesCompar
         html.P([
             html.Label("Choose a country"),
             dcc.Dropdown(id='opt_single_country', options=opts,
-                         value=opts[246]['label'])
+                         value=opts[244]['label'])
             ], style={'width': '400px',
                   'fontSize': '20px',
                   'padding-left': '10px',
@@ -82,7 +83,7 @@ def runServer(app, singleCountryDataframe, allCountrysDataframe, countriesCompar
         html.P([
             html.Label("Choose a set of countries"),
             dcc.Dropdown(id='opt_combined_country', options=opts,
-                         value=[opts[246]['label'], opts[248]['label']],
+                         value=[opts[244]['label'], opts[246]['label']],
                          multi=True)
         ], style={'width': '400px',
                   'fontSize': '20px',
@@ -126,16 +127,15 @@ def runServer(app, singleCountryDataframe, allCountrysDataframe, countriesCompar
         html.Br(),
         html.Br(),
 
-        html.Table([
-            html.Thead(
-                html.Tr([html.Th(col) for col in countriesComparisonTables.columns])
+        html.Div([
+            dash_table.DataTable(
+                id='comparison-data-table',
+                columns=[{"name": i, "id": i} for i in countriesComparisonTables.columns],
+                editable=False,
+                style_table={'maxWidth': '1500px'},
+                data=countriesComparisonTables.to_dict('records'),
             ),
-            html.Tbody([
-                html.Tr([
-                    html.Td(countriesComparisonTables.iloc[i][col]) for col in countriesComparisonTables.columns
-                ]) for i in range((len(countriesComparisonTables)))
-            ])
-        ])
+        ]),
     ])
 
     @app.callback(Output('single-country-graph', 'figure'), [Input('opt_single_country', 'value')])
@@ -200,3 +200,9 @@ def runServer(app, singleCountryDataframe, allCountrysDataframe, countriesCompar
             )
         }
         return fig
+
+    @app.callback(Output('comparison-data-table', 'data'), [Input('opt_combined_country', 'value')])
+    def updateComparisonDatatable(countryList):
+        combinedCountryDataframe = OnDataProcessing.countriesComparisonTables(countryList)
+        data = combinedCountryDataframe.to_dict('records')
+        return data
