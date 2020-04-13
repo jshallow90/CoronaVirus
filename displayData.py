@@ -44,10 +44,13 @@ def generate_table(dataframe, max_rows=10):
     ])
 
 
-def runServer(app, singleCountryDataframe, allCountrysDataframe):
+def runServer(app, singleCountryDataframe, allCountrysDataframe, countriesComparisonTables):
     app.layout = html.Div([
+        html.H2('COVID-19 outbreak analysis'),
+        html.Br(),
+        html.H4('Single country display'),
         dcc.Graph(
-            id='life-exp-vs-gdp',
+            id='single-country-graph',
             figure={
                 'data': [
                     go.Scatter(
@@ -65,33 +68,45 @@ def runServer(app, singleCountryDataframe, allCountrysDataframe):
                 ],
                 'layout': go.Layout(
                     xaxis={'title': 'Date'},
-                    yaxis={'title': 'Total for Italy'},
+                    #yaxis={'type': 'log', 'dtick': 'log_10(2)', 'title': 'Total for'},
+                    yaxis={'title': 'Total for ' + singleCountryDataframe['country'][0]},
                     margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
                     legend={'x': 0, 'y': 1},
                     hovermode='closest'
                 )
             }
         ),
+
+        html.Br(),
+        html.H4('Country comparison'),
+
         dcc.Graph(
-            id='life-exp-vs-gdp',
+            id='country-comparison-graph',
             figure={
                 'data': [
                     go.Scatter(
-                        x=allCountrysDataframe[allCountrysDataframe['deaths'] > 0].index,
-                        y=allCountrysDataframe[allCountrysDataframe['deaths'] > 0 and allCountrysDataframe['country'] == country]['deaths'],
-                        text=singleCountryDataframe[status],
+                        x=allCountrysDataframe[
+                            (allCountrysDataframe['deaths'] > 0) &
+                            (allCountrysDataframe['country'] == country)
+                        ].index,
+                        y=allCountrysDataframe[
+                            (allCountrysDataframe['deaths'] > 0) &
+                            (allCountrysDataframe['country'] == country)
+                            ]['deaths'],
+                        text=country,
                         mode='lines+markers',
                         opacity=0.8,
                         marker={
                             'size': 15,
                             'line': {'width': 0.5, 'color': 'white'}
                         },
-                        name=status
+                        name=country
                     ) for country in allCountrysDataframe.country.unique()
                 ],
                 'layout': go.Layout(
                     xaxis={'title': 'Date'},
-                    yaxis={'title': 'Total for Italy'},
+                    #yaxis={'type': 'log', 'dtick': 'log_10(2)', 'title': 'Total country comparison'},
+                    yaxis={'title': 'Total country comparison'},
                     margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
                     legend={'x': 0, 'y': 1},
                     hovermode='closest'
@@ -102,5 +117,5 @@ def runServer(app, singleCountryDataframe, allCountrysDataframe):
         html.Br(),
         html.Br(),
 
-        generate_table(singleCountryDataframe)
+        generate_table(countriesComparisonTables)
     ])

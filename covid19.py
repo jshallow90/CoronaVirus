@@ -7,8 +7,12 @@ from Utils import constants
 
 def main():
     app = dash.Dash(__name__, external_stylesheets=constants.external_stylesheets)
-    displayData.runServer(app, OnDataProcessing.getCountryData('italy'),
-                          OnDataProcessing.combineCountryDataFrames(constants.countryTestCases))
+
+    singleCountry = OnDataProcessing.getCountryData('united-kingdom')
+    combinedCountry = OnDataProcessing.combineCountryDataFrames(constants.countryTestCases)
+    countriesComparisonTables = OnDataProcessing.countriesComparisonTables(constants.countryTestCases)
+    displayData.runServer(app, singleCountry, combinedCountry, countriesComparisonTables)
+
     return app
 
 

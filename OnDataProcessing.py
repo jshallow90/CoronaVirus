@@ -36,7 +36,7 @@ def countryDataRequest(country_slug, status):
     :param status: can be one of deaths, confirmed, recovered
     :return: json of the requested country, mapped based on countryMapping function
     """
-    statuses = {'confirmed', 'recovered', 'deaths'}
+    statuses = constants.statuses
     if status not in statuses:
         raise ValueError("Invalid status. Expected one of: %s" % statuses)
 
@@ -86,7 +86,7 @@ def parseData(countryJSON, ignoreZeroDates=False):
     return caseDict
 
 
-def combineSingleCountryStatistics(country, printCSV=False):
+def singleCountryStatistics(country, printCSV=False):
     """
     :param country: country requesting data for
     :param deaths: parseData for country for number of deaths
@@ -96,9 +96,8 @@ def combineSingleCountryStatistics(country, printCSV=False):
     :return: format will be
     datetime, deaths, confirmed, recovered
     """
-    statuses = ['deaths', 'confirmed', 'recovered']
     dataList = []
-    for status in statuses:
+    for status in constants.statuses:
         dataList.append(pd.Series(parseData(countryDataRequest(country, status)), name=status))
     combined_fd = pd.concat(dataList, axis=1)
     combined_fd['country'] = country
@@ -138,7 +137,7 @@ def getCountryData(countryName):
         raise ValueError("Invalid country slug. must be one of : " + constants.countrySlugs)
 
     if requiresAPIupdate(countryName):
-        return combineSingleCountryStatistics(countryName, True)
+        return singleCountryStatistics(countryName, True)
     else:
         return countryCSVReader(countryName)
 
@@ -147,4 +146,29 @@ def combineCountryDataFrames(countries):
     countriesDataFrames = pd.DataFrame()
     for country in countries:
         countriesDataFrames = countriesDataFrames.append(getCountryData(country))
-    print(countriesDataFrames)
+    countriesDataFrames.to_clipboard(sep=',')
+    return countriesDataFrames
+
+
+def countriesComparisonTables(countries):
+    cols = [
+            'country', 'confirmed', 'deaths', 'recovered',
+            'Change in deaths cases in 1 day', 'Change in deaths cases in one week',
+            'Change in confirmed cases in 1 day', 'Change in confirmed cases in one week',
+            'Change in recovered cases in 1 day', 'Change in recovered cases in one week'
+            ]
+    countriesComparisonTables = pd.DataFrame(columns=cols)
+    for country in countries:
+        countryDF = getCountryData(country)
+        countriesComparisonTables = countriesComparisonTables.append(countryDF.iloc[-1])
+
+        for status in constants.statuses:
+            oneDayDelta = countryDF.iloc[-1][status] - countryDF.iloc[-2][status]
+            weekDelta = countryDF.iloc[-1][status] - countryDF.iloc[-8][status]
+            countriesComparisonTables.iloc[
+                -1, countriesComparisonTables.columns.get_loc('Change in ' + status + ' cases in 1 day')] = oneDayDelta
+            countriesComparisonTables.iloc[
+                -1, countriesComparisonTables.columns.get_loc('Change in ' + status + ' cases in one week')] = weekDelta
+
+    countriesComparisonTables['country'] = countriesComparisonTables['country'].str.title()
+    return countriesComparisonTables
