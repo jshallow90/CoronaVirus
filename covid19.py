@@ -9,8 +9,9 @@ def main():
     app = dash.Dash(__name__, external_stylesheets=constants.external_stylesheets)
 
     singleCountry = OnDataProcessing.getCountryData('united-kingdom')
-    combinedCountry = OnDataProcessing.combineCountryDataFrames(constants.countryTestCases)
-    countriesComparisonTables = OnDataProcessing.countriesComparisonTables(constants.countryTestCases)
+    combinedCountry = OnDataProcessing.combineCountryDataFrames(['united-kingdom', 'us'])
+    countriesComparisonTables = OnDataProcessing.countriesComparisonTables(['united-kingdom', 'us'])
+    print(countriesComparisonTables)
     displayData.runServer(app, singleCountry, combinedCountry, countriesComparisonTables)
 
     return app

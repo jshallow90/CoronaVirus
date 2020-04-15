@@ -117,6 +117,8 @@ def countryCSVReader(countryName):
 
 
 def requiresAPIupdate(countryName):
+    if countryName is None:
+        return False
     parsedFilename = 'Outputs/' + countryName + '.csv'
     if not os.path.isfile(parsedFilename):
         return True
@@ -124,7 +126,7 @@ def requiresAPIupdate(countryName):
         currentDate = datetime.datetime.today()
         countryDate = max(countryCSVReader(countryName).index)
         countryDateParsed = datetime.datetime(int(countryDate[:4]), int(countryDate[5:7]), int(countryDate[8:10]))
-        return (currentDate - countryDateParsed).days > 2
+        return (currentDate - countryDateParsed).days > 1
 
 
 def getCountryData(countryName):
@@ -146,7 +148,6 @@ def combineCountryDataFrames(countries):
     countriesDataFrames = pd.DataFrame()
     for country in countries:
         countriesDataFrames = countriesDataFrames.append(getCountryData(country))
-    countriesDataFrames.to_clipboard(sep=',')
     return countriesDataFrames
 
 
