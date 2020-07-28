@@ -2,6 +2,8 @@
   <component name="FileTypeManager" version="17">
     <extensionMap>
       <mapping pattern="testSymbolClear_input" type="PLAIN_TEXT" />
+      <mapping pattern="testAddExistingOrder_input" type="PLAIN_TEXT" />
+      <mapping pattern="testAddExecutions_input" type="PLAIN_TEXT" />
       <mapping pattern="testAddOrder_input" type="PLAIN_TEXT" />
     </extensionMap>
   </component>
