@@ -1,12 +1,14 @@
 <application>
   <component name="FileTypeManager" version="17">
     <extensionMap>
+      <mapping pattern="testAddExistingOrder_input" type="PLAIN_TEXT" />
       <mapping pattern="testSymbolClear_input" type="PLAIN_TEXT" />
       <mapping pattern="testCancelNonExistingOrder" type="PLAIN_TEXT" />
-      <mapping pattern="testAddExistingOrder_input" type="PLAIN_TEXT" />
       <mapping pattern="testAddExecutions_input" type="PLAIN_TEXT" />
+      <mapping pattern="testAddTrade" type="PLAIN_TEXT" />
       <mapping pattern="testCancelOrders" type="PLAIN_TEXT" />
       <mapping pattern="testAddOrder_input" type="PLAIN_TEXT" />
+      <mapping pattern="testAddNonExistingExecutions" type="PLAIN_TEXT" />
     </extensionMap>
   </component>
 </application>
