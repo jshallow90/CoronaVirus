@@ -6,10 +6,12 @@
       <mapping pattern="testCancelOrders" type="PLAIN_TEXT" />
       <mapping pattern="testAddExistingOrder_input" type="PLAIN_TEXT" />
       <mapping pattern="testTopSymbols" type="PLAIN_TEXT" />
+      <mapping pattern=".env.example" type="PLAIN_TEXT" />
       <mapping pattern="testAddTrade" type="PLAIN_TEXT" />
       <mapping pattern="testAddNonExistingExecutions" type="PLAIN_TEXT" />
       <mapping pattern="testSymbolClear_input" type="PLAIN_TEXT" />
       <mapping pattern="testAddOrder_input" type="PLAIN_TEXT" />
+      <mapping pattern=".env" type="PLAIN_TEXT" />
     </extensionMap>
   </component>
 </application>
