@@ -6,7 +6,6 @@ class Database:
     URI = "mongodb://127.0.0.1:27017/covid19"
     DATABASE = pymongo.MongoClient(URI).get_database()
 
-
     @staticmethod
     def insert(collection, data):
         Database.DATABASE[collection].insert(data)

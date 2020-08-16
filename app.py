@@ -1,16 +1,16 @@
 from dash import Dash
-from models import displayData
 from models.country import Country
 from common import constants
+from models.server import Server
 
 
 def main():
     app = Dash(__name__, external_stylesheets=constants.external_stylesheets)
 
     startingCountry = Country('united-kingdom')
-    combinedCountries = [Country('united-kingdom'), Country('italy'), Country('spain')]
+    combinedCountries = [Country('italy'), Country('spain')]
     #countriesComparisonTables = OnDataProcessing.compareCountryTables(['united-kingdom', 'italy'])
-    displayData.runServer(app, startingCountry, combinedCountries)#, countriesComparisonTables)
+    Server.runServer(app=app, country=startingCountry, countries=combinedCountries)
 
     return app
 
