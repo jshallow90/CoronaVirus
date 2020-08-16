@@ -43,4 +43,4 @@ countrySlugs = {
     'uruguay', 'us', 'us-minor-outlying-islands', 'uzbekistan', 'vanuatu', 'venezuela', 'vietnam',
     'virgin-islands', 'wallis-and-futuna-islands', 'western-sahara', 'yemen', 'zambia', 'zimbabwe'
 }
-statuses = {'deaths', 'confirmed', 'recovered'}
+statuses = {'deaths', 'confirmed'}

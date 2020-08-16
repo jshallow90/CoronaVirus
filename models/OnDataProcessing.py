@@ -1,33 +1,11 @@
-from Utils import constants
+import common.constants as constants
 import requests
 import datetime
 import pandas as pd
-import os.path
-
-
-class Country:
-    """
-    Defines country class holding dates and totals as list objects.
-    """
-
-    def __init__(self, country, dates, totalDeaths, totalConfirmed, totalRecovered):
-        self.country = country
-        self.dates = dates
-        self.totalDeaths = totalDeaths
-        self.totalConfirmed = totalConfirmed
-        self.totalRecovered = totalRecovered
-
-    def appendData(self, date, deathCount, confirmedCount, recoveredCount):
-        self.dates.append(date)
-        self.totalDeaths.append(deathCount)
-        self.totalConfirmed.append(confirmedCount)
-        self.totalRecovered.append(recoveredCount)
 
 
 def isValidCountry(country):
-    if country in constants.countrySlugs:
-        return True
-    return False
+    return True if country in constants.countrySlugs else False
 
 
 def countryDataRequest(country_slug, status):
@@ -36,9 +14,8 @@ def countryDataRequest(country_slug, status):
     :param status: can be one of deaths, confirmed, recovered
     :return: json of the requested country, mapped based on countryMapping function
     """
-    statuses = constants.statuses
-    if status not in statuses:
-        raise ValueError("Invalid status. Expected one of: %s" % statuses)
+    if status not in constants.statuses:
+        raise ValueError(f"Invalid status. Expected one of: {constants.statuses}")
 
     provinceRequest = ""
     if country_slug in constants.UKSet:
@@ -48,7 +25,7 @@ def countryDataRequest(country_slug, status):
         provinceRequest = country_slug
         country_slug = 'france'
 
-    requestPath = "{}country/{}/status/{}".format(constants.rootRequest, country_slug, status)
+    requestPath = f"{constants.rootRequest}country/{country_slug}/status/{status}"
     response = requests.get(requestPath).json()
 
     if provinceRequest != "":
@@ -71,6 +48,9 @@ def countryDataRequest(country_slug, status):
 def parseData(countryJSON, ignoreZeroDates=False):
     caseDict = {}
     for jsonObject in countryJSON:
+
+        if type(jsonObject) != dict:
+            continue
         caseDate = datetime.datetime(int(jsonObject['Date'][:4]), int(jsonObject['Date'][5:7]),
                                      int(jsonObject['Date'][8:10]))
         numberCases = int(jsonObject['Cases'])
@@ -86,13 +66,9 @@ def parseData(countryJSON, ignoreZeroDates=False):
     return caseDict
 
 
-def singleCountryStatistics(country, printCSV=False):
+def singleCountryStatistics(country):
     """
     :param country: country requesting data for
-    :param deaths: parseData for country for number of deaths
-    :param confirmed: parseData for country for number of confirmed cases
-    :param recovered: parseData for country for number of recovered cases
-    :param printCSV: boolean whether to print the data to a CSV file
     :return: format will be
     datetime, deaths, confirmed, recovered
     """
@@ -103,30 +79,7 @@ def singleCountryStatistics(country, printCSV=False):
     combined_fd['country'] = country
     combined_fd.index.names = ['Date']
 
-    if printCSV:
-        outputFilePath = 'Outputs/' + country + '.csv'
-        combined_fd.to_csv(outputFilePath, index=True, header=True)
     return combined_fd
-
-
-def countryCSVReader(countryName):
-    parsedFilename = 'Outputs/' + countryName + '.csv'
-    df = pd.read_csv(parsedFilename, sep=',')
-    df = df.set_index('Date')
-    return df
-
-
-def requiresAPIupdate(countryName):
-    if countryName is None:
-        return False
-    parsedFilename = 'Outputs/' + countryName + '.csv'
-    if not os.path.isfile(parsedFilename):
-        return True
-    else:
-        currentDate = datetime.datetime.today()
-        countryDate = max(countryCSVReader(countryName).index)
-        countryDateParsed = datetime.datetime(int(countryDate[:4]), int(countryDate[5:7]), int(countryDate[8:10]))
-        return (currentDate - countryDateParsed).days > 1
 
 
 def getCountryData(countryName):
@@ -138,10 +91,7 @@ def getCountryData(countryName):
     if not isValidCountry:
         raise ValueError("Invalid country slug. must be one of : " + constants.countrySlugs)
 
-    if requiresAPIupdate(countryName):
-        return singleCountryStatistics(countryName, True)
-    else:
-        return countryCSVReader(countryName)
+    return singleCountryStatistics(countryName)
 
 
 def combineCountryDataFrames(countries):
@@ -151,13 +101,13 @@ def combineCountryDataFrames(countries):
     return countriesDataFrames
 
 
-def countriesComparisonTables(countries):
+def compareCountryTables(countries):
     cols = [
-            'country', 'confirmed', 'deaths', 'recovered',
-            'Change in deaths cases in 1 day', 'Change in deaths cases in one week',
-            'Change in confirmed cases in 1 day', 'Change in confirmed cases in one week',
-            'Change in recovered cases in 1 day', 'Change in recovered cases in one week'
-            ]
+        'country', 'confirmed', 'deaths', 'recovered',
+        'Change in deaths cases in 1 day', 'Change in deaths cases in one week',
+        'Change in confirmed cases in 1 day', 'Change in confirmed cases in one week',
+        'Change in recovered cases in 1 day', 'Change in recovered cases in one week'
+    ]
     countriesComparisonTables = pd.DataFrame(columns=cols)
     for country in countries:
         countryDF = getCountryData(country)
