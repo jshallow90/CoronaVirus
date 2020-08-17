@@ -15,14 +15,8 @@ class Server:
 
     @staticmethod
     def runServer(app, country, countries):  # , countriesComparisonTables):
-        countryDF = country.getCountryDF()
-        countryDF = countryDF[countryDF['province'] == ''].set_index('date')
-
-        countriesDF = pd.DataFrame()
-        for countryList in countries:
-            countryListDF = countryList.getCountryDF()
-            countryListDF = countryListDF[countryListDF['province'] == ''].set_index('date')
-            countriesDF = countriesDF.append(countryListDF)
+        countryDF = Server.getCountryDF(country)
+        countriesDF = Server.getCountriesDF(countries)
 
         opts = [{'label': i, 'value': i} for i in constants.countrySlugs]
         opts = sorted(opts, key=lambda i: i['label'], reverse=False)
@@ -130,16 +124,16 @@ class Server:
 
         @app.callback(Output('single-country-graph', 'figure'), [Input('opt_single_country', 'value')])
         def updateSingleCountryTable(countryInput):
-            country = Country(countryInput)
-            countryDF = country.getCountryDF()
-            countryDF = countryDF[countryDF['province'] == ''].set_index('date')
+            _country = Country(countryInput)
+            _countryDF = _country.getCountryDF()
+            _countryDF = _countryDF[_countryDF['province'] == ''].set_index('date')
 
             fig = {
                 'data': [
                     go.Scatter(
-                        x=countryDF[countryDF[status] > 0].index,
-                        y=countryDF[countryDF[status] > 0][status],
-                        text=countryDF[status],
+                        x=_countryDF[_countryDF[status] > 0].index,
+                        y=_countryDF[_countryDF[status] > 0][status],
+                        text=_countryDF[status],
                         mode='lines+markers',
                         opacity=0.8,
                         marker={
@@ -161,12 +155,7 @@ class Server:
 
         @app.callback(Output('country-comparison-graph', 'figure'), [Input('opt_combined_country', 'value')])
         def updateComparisonCountryTable(_countryList):
-            _countriesDF = pd.DataFrame()
-            for _country in _countryList:
-                _countrySelect = Country(_country)
-                _countryListDF = _countrySelect.getCountryDF()
-                _countryListDF = _countryListDF[_countryListDF['province'] == ''].set_index('date')
-                _countriesDF = _countriesDF.append(_countryListDF)
+            _countriesDF = Server.getCountriesDF(_countryList)
 
             fig = {
                 'data': [
@@ -204,3 +193,20 @@ class Server:
         #     combinedCountryDataframe = OnDataProcessing.compareCountryTables(countryList)
         #     data = combinedCountryDataframe.to_dict('records')
         #     return data
+
+    @staticmethod
+    def getCountryDF(country):
+        countryClass = Country(country)
+        countryDF = countryClass.getCountryDF()
+        countryDF = countryDF[countryDF['province'] == ''].set_index('date')
+        return countryDF
+
+    @staticmethod
+    def getCountriesDF(countryList):
+        countriesDF = pd.DataFrame()
+        for country in countryList:
+            countryClass = Country(country)
+            countryListDF = countryClass.getCountryDF()
+            countryListDF = countryListDF[countryListDF['province'] == ''].set_index('date')
+            countriesDF = countriesDF.append(countryListDF)
+        return countriesDF

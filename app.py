@@ -6,11 +6,7 @@ from models.server import Server
 
 def main():
     app = Dash(__name__, external_stylesheets=constants.external_stylesheets)
-
-    startingCountry = Country('united-kingdom')
-    combinedCountries = [Country('italy'), Country('spain')]
-    #countriesComparisonTables = OnDataProcessing.compareCountryTables(['united-kingdom', 'italy'])
-    Server.runServer(app=app, country=startingCountry, countries=combinedCountries)
+    Server.runServer(app=app, country='united-kingdom', countries=['italy', 'spain'])
 
     return app
 
