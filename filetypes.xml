@@ -1,6 +1,7 @@
 <application>
   <component name="FileTypeManager" version="17">
     <extensionMap>
+      <mapping pattern="input" type="CSV" />
       <mapping pattern="testCancelOrders" type="PLAIN_TEXT" />
       <mapping pattern="testTopSymbols" type="PLAIN_TEXT" />
       <mapping pattern="testAddExecutions_input" type="PLAIN_TEXT" />
