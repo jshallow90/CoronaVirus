@@ -12,6 +12,7 @@
       <mapping pattern="testAddOrder_input" type="PLAIN_TEXT" />
       <mapping pattern="testAddExistingOrder_input" type="PLAIN_TEXT" />
       <mapping pattern="testAddTrade" type="PLAIN_TEXT" />
+      <mapping ext="config" type="PLAIN_TEXT" />
     </extensionMap>
   </component>
 </application>
